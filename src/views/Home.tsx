@@ -18,16 +18,18 @@ export default function Home() {
       headerRight: () => (
         <Button
           title='Agregar'
+          color={'#fff'}
           onPress={() => navigation.navigate('Agregar')}
         />
       ),
       headerLeft: () => (
         <>
           {token ? (
-            <Button title='Log Out' onPress={() => logOut()} />
+            <Button title='Log Out' color={'#fff'} onPress={() => logOut()} />
           ) : (
             <Button
               title='Login'
+              color={'#fff'}
               onPress={() => navigation.navigate('Login')}
             />
           )}
@@ -97,12 +99,13 @@ export default function Home() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    backgroundColor: '#475569'
   },
   products: {
     paddingHorizontal: 24,
     marginBottom: 32
   },
-  title: { fontSize: 32, fontWeight: 'bold', margin: 16 },
+  title: { fontSize: 32, fontWeight: 'bold', margin: 16, color: '#fff' },
   cantidad: { fontSize: 24, fontWeight: 'bold', color: 'gray' }
 })

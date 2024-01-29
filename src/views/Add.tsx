@@ -25,6 +25,7 @@ export default function Add() {
           setNewProducto({ ...newProducto, producto_nombre: text })
         }
         placeholder='Nombre'
+        placeholderTextColor='#fff'
         style={styles.textInput}
       />
       <TextInput
@@ -33,9 +34,10 @@ export default function Add() {
         }
         keyboardType='number-pad'
         placeholder='Cantidad'
+        placeholderTextColor='#fff'
         style={styles.numberInput}
       />
-      <Button title='Guardar' onPress={onSave} />
+      <Button title='Guardar' color='#fff' onPress={onSave} />
     </View>
   )
 }
@@ -43,11 +45,11 @@ export default function Add() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#475569',
     alignItems: 'center'
   },
 
-  title: { fontSize: 32, fontWeight: '700', padding: 20 },
+  title: { fontSize: 32, fontWeight: '700', padding: 20, color: '#fff' },
 
   textInput: {
     width: '90%',
@@ -55,7 +57,9 @@ const styles = StyleSheet.create({
     marginVertical: 6,
     borderWidth: 1,
     borderColor: '#ddd',
-    borderRadius: 6
+    borderRadius: 6,
+    color: '#fff',
+    shadowColor: '#fff'
   },
 
   numberInput: {
@@ -64,6 +68,7 @@ const styles = StyleSheet.create({
     marginVertical: 6,
     borderWidth: 1,
     borderColor: '#ddd',
-    borderRadius: 6
+    borderRadius: 6,
+    color: '#fff'
   }
 })

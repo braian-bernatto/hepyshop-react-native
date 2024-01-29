@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { Producto } from '../../types'
-import { Image, StyleSheet, Text, View } from 'react-native'
+import { Button, Image, StyleSheet, Text, View } from 'react-native'
+import { useNavigation } from '@react-navigation/native'
 
 const Product = ({
   producto_nombre,
@@ -9,6 +10,8 @@ const Product = ({
   estado_producto_descri,
   imagenes
 }: Producto) => {
+  const navigation = useNavigation()
+
   return (
     <View style={styles.container}>
       <View
@@ -17,6 +20,7 @@ const Product = ({
           flexDirection: 'row',
           justifyContent: 'center',
           width: '100%',
+          height: 80,
           alignItems: 'center'
         }}>
         <Image style={styles.imagen} source={{ uri: imagenes[0].imagen_url }} />
@@ -26,6 +30,21 @@ const Product = ({
         {producto_cantidad} [{unidad_medida_descri}]
       </Text>
       <Text style={styles.descri}>{estado_producto_descri}</Text>
+      <View style={styles.buttonContainer}>
+        <Button
+          title='Ver'
+          color={'#475569'}
+          onPress={() =>
+            navigation.navigate('Detalles de producto', {
+              producto_nombre,
+              producto_cantidad,
+              unidad_medida_descri,
+              estado_producto_descri,
+              imagenes
+            })
+          }
+        />
+      </View>
     </View>
   )
 }
@@ -58,6 +77,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#eee',
     paddingVertical: 2,
     paddingHorizontal: 10
+  },
+  buttonContainer: {
+    width: '100%'
   }
 })
 

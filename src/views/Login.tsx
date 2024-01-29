@@ -21,14 +21,16 @@ export default function Login() {
       <TextInput
         onChangeText={text => setUser({ ...user, correo: text.toLowerCase() })}
         placeholder='Correo'
+        placeholderTextColor={'#fff'}
         style={styles.textInput}
       />
       <TextInput
         onChangeText={text => setUser({ ...user, password: text })}
         placeholder='Contraseña'
+        placeholderTextColor={'#fff'}
         style={styles.textInput}
       />
-      <Button title='Enviar' onPress={onSubmit} />
+      <Button title='Enviar' onPress={onSubmit} color='#fff' />
     </View>
   )
 }
@@ -36,11 +38,11 @@ export default function Login() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#475569',
     alignItems: 'center'
   },
 
-  title: { fontSize: 32, fontWeight: '700', padding: 20 },
+  title: { fontSize: 32, fontWeight: '700', padding: 20, color: '#fff' },
 
   textInput: {
     width: '90%',
@@ -48,7 +50,8 @@ const styles = StyleSheet.create({
     marginVertical: 6,
     borderWidth: 1,
     borderColor: '#ddd',
-    borderRadius: 6
+    borderRadius: 6,
+    color: '#fff'
   },
 
   numberInput: {
@@ -57,6 +60,7 @@ const styles = StyleSheet.create({
     marginVertical: 6,
     borderWidth: 1,
     borderColor: '#ddd',
-    borderRadius: 6
+    borderRadius: 6,
+    color: '#fff'
   }
 })
