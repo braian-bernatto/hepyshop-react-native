@@ -1,16 +1,27 @@
 import * as React from 'react'
-import { Producto } from '../../types'
+import { Producto, RootStackParams } from '../../types'
 import { Button, Image, StyleSheet, Text, View } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+
+type ProductDetailsNavigationProps = NativeStackNavigationProp<
+  RootStackParams,
+  'Detalles'
+>
 
 const Product = ({
+  producto_id,
   producto_nombre,
+  estado_producto,
   producto_cantidad,
-  unidad_medida_descri,
+  unidad_medida_id,
+  estado_producto_id,
   estado_producto_descri,
+  unidad_medida_descri,
+  categorias,
   imagenes
 }: Producto) => {
-  const navigation = useNavigation()
+  const navigation = useNavigation<ProductDetailsNavigationProps>()
 
   return (
     <View style={styles.container}>
@@ -35,11 +46,16 @@ const Product = ({
           title='Ver'
           color={'#475569'}
           onPress={() =>
-            navigation.navigate('Detalles de producto', {
+            navigation.navigate('Detalles', {
+              producto_id,
               producto_nombre,
+              estado_producto,
               producto_cantidad,
-              unidad_medida_descri,
+              unidad_medida_id,
+              estado_producto_id,
               estado_producto_descri,
+              unidad_medida_descri,
+              categorias,
               imagenes
             })
           }

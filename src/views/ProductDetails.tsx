@@ -1,7 +1,8 @@
 import React from 'react'
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native'
-import { Producto } from '../../types'
+import { RootStackParams } from '../../types'
 import { useRoute } from '@react-navigation/native'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
 
 const ProductDetails = () => {
   const {
@@ -12,7 +13,7 @@ const ProductDetails = () => {
       estado_producto_descri,
       imagenes
     }
-  } = useRoute()
+  } = useRoute<NativeStackScreenProps<RootStackParams, 'Detalles'>['route']>()
 
   return (
     <View style={styles.container}>

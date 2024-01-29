@@ -45,3 +45,8 @@ export type Usuario = {
   usuario_aprobado: boolean
   usuario_admin: boolean
 }
+
+export type RootStackParams = {
+  Home: undefined
+  Detalles: Producto
+}

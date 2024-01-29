@@ -36,7 +36,7 @@ export default function Navigation() {
           options={{ ...routeScreenDefaultOptions, presentation: 'modal' }}
         />
         <Stack.Screen
-          name='Detalles de producto'
+          name='Detalles'
           component={ProductDetails}
           options={routeScreenDefaultOptions}
         />
