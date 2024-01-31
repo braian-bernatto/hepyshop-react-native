@@ -152,6 +152,7 @@ export default function Add() {
     <View style={styles.container}>
       <Text style={styles.title}>➕ Nuevo Producto</Text>
       <ScrollView
+        style={styles.container}
         contentContainerStyle={{
           flexDirection: 'column',
           alignItems: 'center',
@@ -266,8 +267,7 @@ export default function Add() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#475569',
-    alignItems: 'center'
+    backgroundColor: '#475569'
   },
 
   imageContainer: {
