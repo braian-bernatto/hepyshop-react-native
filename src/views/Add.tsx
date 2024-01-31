@@ -125,7 +125,6 @@ export default function Add() {
   }, [])
 
   const onSubmit = async () => {
-    // navigation.goBack()
     let formData = new FormData()
     const token = await getToken()
     if (!token) {
@@ -167,6 +166,7 @@ export default function Add() {
       })
       const data = await response.json()
       console.log(data)
+      navigation.goBack()
     } catch (error) {
       console.error(error)
     }

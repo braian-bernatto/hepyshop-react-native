@@ -40,13 +40,13 @@ export default function Home() {
           .sort((a: Producto, b: Producto) => b.producto_id - a.producto_id)
 
         setProductos(productWithUrl)
-        setRefreshing(false)
       } else {
         console.log('no hay token')
         const response = await fetch(`${backendUrl}/productos`)
         const json = await response.json()
         setProductos(json)
       }
+      setRefreshing(false)
     } catch (error) {
       console.error(error)
     }
@@ -92,7 +92,9 @@ export default function Home() {
       <FlatList
         data={productos}
         style={styles.productsList}
-        ListEmptyComponent={<Text>No se encontraron productos...</Text>}
+        ListEmptyComponent={
+          <Text style={styles.title}>No se encontraron productos...</Text>
+        }
         contentContainerStyle={{
           flexDirection: 'row',
           alignItems: 'center',
