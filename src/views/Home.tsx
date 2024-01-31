@@ -4,13 +4,58 @@ import Constants from 'expo-constants'
 import Product from '../components/Product'
 import { getToken, logOut } from '../../utils/login'
 import { Producto } from '../../types'
-import { Button, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Button, FlatList, StyleSheet, Text, View } from 'react-native'
 
 export default function Home() {
   const navigation = useNavigation()
-  const [productos, setProductos] = React.useState([])
+  const [productos, setProductos] = React.useState<Producto[]>([])
   const [token, setToken] = React.useState()
+  const [refreshing, setRefreshing] = React.useState(false)
   const backendUrl = Constants.expoConfig?.extra?.backendUrl || ''
+
+  const getProductos = async () => {
+    const token = await getToken()
+    try {
+      if (token) {
+        setToken(token)
+        console.log({ token })
+
+        const response = await fetch(`${backendUrl}/productos`, {
+          headers: {
+            'Content-type': 'application/json',
+            Authorization: `Bearer ${token.token}`
+          }
+        })
+        const data = await response.json()
+        const productWithUrl = data
+          .map((item: any) => ({
+            ...item,
+            imagenes: item.imagenes.map((img: any) => ({
+              ...img,
+              imagen_url: img.imagen_url
+                ? `${backendUrl}/${img.imagen_url.replace('public/', '')}`
+                : null
+            }))
+          }))
+          .sort((a: Producto, b: Producto) => b.producto_id - a.producto_id)
+
+        setProductos(productWithUrl)
+        setRefreshing(false)
+      } else {
+        console.log('no hay token')
+        const response = await fetch(`${backendUrl}/productos`)
+        const json = await response.json()
+        setProductos(json)
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const handleRefresh = () => {
+    setRefreshing(true)
+    getProductos()
+  }
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -38,61 +83,28 @@ export default function Home() {
   }, [token])
 
   React.useEffect(() => {
-    const getProductos = async () => {
-      const token = await getToken()
-      try {
-        if (token) {
-          setToken(token)
-          console.log({ token })
-
-          const response = await fetch(`${backendUrl}/productos`, {
-            headers: {
-              'Content-type': 'application/json',
-              Authorization: `Bearer ${token.token}`
-            }
-          })
-          const data = await response.json()
-          const productWithUrl = data.map((item: any) => ({
-            ...item,
-            imagenes: item.imagenes.map((img: any) => ({
-              ...img,
-              imagen_url: img.imagen_url
-                ? `${backendUrl}/${img.imagen_url.replace('public/', '')}`
-                : null
-            }))
-          }))
-
-          setProductos(productWithUrl)
-        } else {
-          console.log('no hay token')
-          const response = await fetch(`${backendUrl}/productos`)
-          const json = await response.json()
-          setProductos(json)
-        }
-      } catch (error) {
-        console.error(error)
-      }
-    }
-
     getProductos()
   }, [])
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Productos</Text>
-      <ScrollView
-        style={styles.products}
+      <FlatList
+        data={productos}
+        style={styles.productsList}
+        ListEmptyComponent={<Text>No se encontraron productos...</Text>}
         contentContainerStyle={{
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'center',
-          flexWrap: 'wrap'
-        }}>
-        {productos.length > 0 &&
-          productos.map((producto: Producto) => (
-            <Product key={producto.producto_id} {...producto} />
-          ))}
-      </ScrollView>
+          flexWrap: 'wrap',
+          paddingBottom: 40
+        }}
+        keyExtractor={item => item.producto_id.toString()}
+        renderItem={({ item }) => <Product key={item.producto_id} {...item} />}
+        refreshing={refreshing}
+        onRefresh={handleRefresh}
+      />
     </View>
   )
 }
@@ -102,10 +114,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#475569'
   },
-  products: {
-    paddingHorizontal: 24,
-    marginBottom: 32
+  productsList: {
+    paddingHorizontal: 24
   },
-  title: { fontSize: 32, fontWeight: 'bold', margin: 16, color: '#fff' },
+  title: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    margin: 16,
+    color: '#fff'
+  },
   cantidad: { fontSize: 24, fontWeight: 'bold', color: 'gray' }
 })
