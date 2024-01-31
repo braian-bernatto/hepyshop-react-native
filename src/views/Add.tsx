@@ -126,11 +126,50 @@ export default function Add() {
 
   const onSubmit = async () => {
     // navigation.goBack()
+    let formData = new FormData()
+    const token = await getToken()
+    if (!token) {
+      console.error('no hay token')
+      return null
+    }
+
     const categoriasId = categorias
       .filter((cat: any) => cat.selected)
       .map((cat: any) => +cat.key)
 
-    console.log({ newProducto, categoriasId, images })
+    formData.append('categorias', categoriasId.join(','))
+
+    if (images.length) {
+      images.forEach((foto: any) =>
+        formData.append('foto', {
+          uri: foto.uri,
+          name: foto.fileName,
+          type: foto.type
+        } as any)
+      )
+    }
+
+    Object.keys(newProducto).forEach((key: any) => {
+      formData.append(key, `${newProducto[key]}`)
+    })
+
+    console.log(JSON.stringify(formData, null, 2))
+
+    try {
+      const response = await fetch(`${backendUrl}/producto`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Accept: 'application/json',
+          Authorization: `Bearer ${token.token}`
+        },
+        body: formData
+      })
+      const data = await response.json()
+      console.log(data)
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   const pickImage = async () => {
@@ -138,12 +177,13 @@ export default function Add() {
     let result = await ImagePicker.launchImageLibraryAsync({
       allowsMultipleSelection: true,
       selectionLimit: 4,
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       aspect: [4, 3],
       quality: 1
     })
 
     if (!result.canceled) {
+      console.log(JSON.stringify(result, null, 2))
       setImages(result.assets)
     }
   }

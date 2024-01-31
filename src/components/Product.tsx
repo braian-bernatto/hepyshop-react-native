@@ -12,7 +12,6 @@ type ProductDetailsNavigationProps = NativeStackNavigationProp<
 const Product = ({
   producto_id,
   producto_nombre,
-  estado_producto,
   producto_cantidad,
   unidad_medida_id,
   estado_producto_id,
@@ -22,7 +21,6 @@ const Product = ({
   imagenes
 }: Producto) => {
   const navigation = useNavigation<ProductDetailsNavigationProps>()
-
   return (
     <View style={styles.container}>
       <View
@@ -34,7 +32,12 @@ const Product = ({
           height: 80,
           alignItems: 'center'
         }}>
-        <Image style={styles.imagen} source={{ uri: imagenes[0].imagen_url }} />
+        {imagenes.length > 0 && (
+          <Image
+            style={styles.imagen}
+            source={{ uri: imagenes[0].imagen_url }}
+          />
+        )}
       </View>
       <Text style={styles.title}>{producto_nombre}</Text>
       <Text style={styles.descri}>
@@ -49,7 +52,6 @@ const Product = ({
             navigation.navigate('Detalles', {
               producto_id,
               producto_nombre,
-              estado_producto,
               producto_cantidad,
               unidad_medida_id,
               estado_producto_id,

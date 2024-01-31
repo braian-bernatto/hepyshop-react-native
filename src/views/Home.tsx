@@ -13,7 +13,6 @@ export default function Home() {
   const backendUrl = Constants.expoConfig?.extra?.backendUrl || ''
 
   React.useLayoutEffect(() => {
-    console.log('entro en layout ', token)
     navigation.setOptions({
       headerRight: () => (
         <Button
@@ -44,6 +43,8 @@ export default function Home() {
       try {
         if (token) {
           setToken(token)
+          console.log({ token })
+
           const response = await fetch(`${backendUrl}/productos`, {
             headers: {
               'Content-type': 'application/json',
@@ -55,10 +56,9 @@ export default function Home() {
             ...item,
             imagenes: item.imagenes.map((img: any) => ({
               ...img,
-              imagen_url: `${backendUrl}/${img.imagen_url.replace(
-                'public/',
-                ''
-              )}`
+              imagen_url: img.imagen_url
+                ? `${backendUrl}/${img.imagen_url.replace('public/', '')}`
+                : null
             }))
           }))
 
