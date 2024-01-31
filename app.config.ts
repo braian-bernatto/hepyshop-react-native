@@ -28,6 +28,15 @@ export default {
     },
     extra: {
       backendUrl: process.env.BACKEND_URL
-    }
+    },
+    plugins: [
+      [
+        'expo-image-picker',
+        {
+          photosPermission:
+            'Permite a HepyShop acceder a tu galeria para alzar foto de tus productos'
+        }
+      ]
+    ]
   }
 }

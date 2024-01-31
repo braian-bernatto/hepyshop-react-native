@@ -1,11 +1,10 @@
 export type Producto = {
   producto_id: number
   producto_nombre: string
-  estado_producto: number
   producto_cantidad: number
   unidad_medida_id: number
+  estado_producto_id: number
 
-  estado_producto_id: string
   estado_producto_descri: string
   unidad_medida_descri: string
   categorias: CategoriaProducto[]
