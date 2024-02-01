@@ -95,11 +95,11 @@ export default function Home() {
         ListEmptyComponent={
           <Text style={styles.title}>No se encontraron productos...</Text>
         }
+        numColumns={2}
         contentContainerStyle={{
-          flexDirection: 'row',
+          flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          flexWrap: 'wrap',
           paddingBottom: 40
         }}
         keyExtractor={item => item.producto_id.toString()}

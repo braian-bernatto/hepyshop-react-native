@@ -48,4 +48,5 @@ export type Usuario = {
 export type RootStackParams = {
   Home: undefined
   Detalles: Producto
+  Editar: Producto
 }

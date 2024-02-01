@@ -21,6 +21,7 @@ export default function Login() {
       <TextInput
         onChangeText={text => setUser({ ...user, correo: text.toLowerCase() })}
         placeholder='Correo'
+        value={user.correo}
         placeholderTextColor={'#fff'}
         style={styles.textInput}
       />

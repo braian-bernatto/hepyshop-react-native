@@ -5,6 +5,7 @@ import Home from './views/Home'
 import Add from './views/Add'
 import Login from './views/Login'
 import ProductDetails from './views/ProductDetails'
+import Edit from './views/Edit'
 
 const Stack = createNativeStackNavigator()
 const routeScreenDefaultOptions = {
@@ -38,6 +39,11 @@ export default function Navigation() {
         <Stack.Screen
           name='Detalles'
           component={ProductDetails}
+          options={routeScreenDefaultOptions}
+        />
+        <Stack.Screen
+          name='Editar'
+          component={Edit}
           options={routeScreenDefaultOptions}
         />
       </Stack.Navigator>

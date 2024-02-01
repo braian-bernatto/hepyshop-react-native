@@ -1,8 +1,9 @@
 import * as React from 'react'
 import { Producto, RootStackParams } from '../../types'
-import { Button, Image, StyleSheet, Text, View } from 'react-native'
+import { Image, StyleSheet, Text, View } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import ButtonCustom from '../components/Button'
 
 type ProductDetailsNavigationProps = NativeStackNavigationProp<
   RootStackParams,
@@ -45,9 +46,8 @@ const Product = ({
       </Text>
       <Text style={styles.descri}>{estado_producto_descri}</Text>
       <View style={styles.buttonContainer}>
-        <Button
+        <ButtonCustom
           title='Ver'
-          color={'#475569'}
           onPress={() =>
             navigation.navigate('Detalles', {
               producto_id,
@@ -73,7 +73,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     width: 150,
-    gap: 10,
+    height: 220,
+    gap: 5,
     borderWidth: 2,
     padding: 12,
     margin: 5,
@@ -85,7 +86,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80
   },
-  title: { fontSize: 12, fontWeight: 'bold' },
+  title: { width: '100%', fontSize: 12, fontWeight: 'bold' },
   descri: {
     fontSize: 12,
     fontWeight: 'bold',
@@ -97,6 +98,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10
   },
   buttonContainer: {
+    marginTop: 5,
     width: '100%'
   }
 })
