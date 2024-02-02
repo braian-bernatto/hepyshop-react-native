@@ -50,3 +50,13 @@ export type RootStackParams = {
   Detalles: Producto
   Editar: Producto
 }
+
+export type ProductoErrors = {
+  producto_id: string
+  producto_nombre: string
+  producto_cantidad: string
+  unidad_medida_id: string
+  estado_producto_id: string
+  categorias: string
+  imagenes: string
+}

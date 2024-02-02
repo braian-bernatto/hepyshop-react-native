@@ -1,7 +1,8 @@
 import * as React from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { login } from '../../utils/login'
-import { Button, StyleSheet, Text, TextInput, View } from 'react-native'
+import { StyleSheet, Text, TextInput, View } from 'react-native'
+import Button from '../components/Button'
 
 export default function Login() {
   const navigation = useNavigation()
@@ -31,7 +32,9 @@ export default function Login() {
         placeholderTextColor={'#fff'}
         style={styles.textInput}
       />
-      <Button title='Enviar' onPress={onSubmit} color='#fff' />
+      <View style={styles.buttonContainer}>
+        <Button title='Enviar' onPress={onSubmit} />
+      </View>
     </View>
   )
 }
@@ -42,9 +45,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#475569',
     alignItems: 'center'
   },
-
+  buttonContainer: {
+    flex: 1,
+    width: '100%',
+    marginVertical: 6,
+    paddingHorizontal: 20
+  },
   title: { fontSize: 32, fontWeight: '700', padding: 20, color: '#fff' },
-
   textInput: {
     width: '90%',
     padding: 13,
@@ -54,7 +61,6 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     color: '#fff'
   },
-
   numberInput: {
     width: '90%',
     padding: 13,

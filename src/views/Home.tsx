@@ -4,7 +4,14 @@ import Constants from 'expo-constants'
 import Product from '../components/Product'
 import { getToken, logOut } from '../../utils/login'
 import { Producto } from '../../types'
-import { Button, FlatList, StyleSheet, Text, View } from 'react-native'
+import {
+  ActivityIndicator,
+  Button,
+  FlatList,
+  StyleSheet,
+  Text,
+  View
+} from 'react-native'
 
 export default function Home() {
   const navigation = useNavigation()
@@ -12,6 +19,7 @@ export default function Home() {
   const [token, setToken] = React.useState()
   const [refreshing, setRefreshing] = React.useState(false)
   const backendUrl = Constants.expoConfig?.extra?.backendUrl || ''
+  const [isLoading, setIsLoading] = React.useState(false)
 
   const getProductos = async () => {
     const token = await getToken()
@@ -19,7 +27,7 @@ export default function Home() {
       if (token) {
         setToken(token)
         console.log({ token })
-
+        setIsLoading(true)
         const response = await fetch(`${backendUrl}/productos`, {
           headers: {
             'Content-type': 'application/json',
@@ -40,12 +48,15 @@ export default function Home() {
           .sort((a: Producto, b: Producto) => b.producto_id - a.producto_id)
 
         setProductos(productWithUrl)
+        setIsLoading(false)
       } else {
         console.log('no hay token')
+        setIsLoading(true)
         const response = await fetch(`${backendUrl}/productos`)
         const json = await response.json()
         setProductos(json)
       }
+      setIsLoading(false)
       setRefreshing(false)
     } catch (error) {
       console.error(error)
@@ -86,6 +97,15 @@ export default function Home() {
     getProductos()
   }, [])
 
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size={'large'} color={'#fff'} />
+        <Text style={styles.title}>Cargando...</Text>
+      </View>
+    )
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Productos</Text>
@@ -115,6 +135,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#475569'
+  },
+  loadingContainer: {
+    flex: 1,
+    backgroundColor: '#475569',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   productsList: {
     paddingHorizontal: 24

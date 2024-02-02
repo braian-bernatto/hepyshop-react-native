@@ -3,11 +3,11 @@ import {
   CategoriaProducto,
   EstadoProducto,
   Producto,
+  ProductoErrors,
   UnidadMedida
 } from '../../types'
 import { useNavigation } from '@react-navigation/native'
 import {
-  Button,
   Image,
   ScrollView,
   StyleSheet,
@@ -20,6 +20,7 @@ import { getToken } from '../../utils/login'
 import Constants from 'expo-constants'
 import { CheckBox } from '@rneui/themed'
 import * as ImagePicker from 'expo-image-picker'
+import Button from '../components/Button'
 
 export default function Add() {
   const backendUrl = Constants.expoConfig?.extra?.backendUrl || ''
@@ -36,6 +37,15 @@ export default function Add() {
   const [unidadesMedida, setUnidadesMedida] = React.useState([])
   const [categorias, setCategorias] = React.useState([])
   const [images, setImages] = React.useState<ImagePicker.ImagePickerAsset[]>([])
+  const [errors, setErrors] = React.useState<ProductoErrors>({
+    producto_id: '',
+    producto_nombre: '',
+    producto_cantidad: '',
+    estado_producto_id: '',
+    unidad_medida_id: '',
+    categorias: '',
+    imagenes: ''
+  })
 
   React.useEffect(() => {
     const getEstados = async () => {
@@ -124,54 +134,6 @@ export default function Add() {
     getCategorias()
   }, [])
 
-  const onSubmit = async () => {
-    let formData = new FormData()
-    const token = await getToken()
-    if (!token) {
-      console.error('no hay token')
-      return null
-    }
-
-    const categoriasId = categorias
-      .filter((cat: any) => cat.selected)
-      .map((cat: any) => +cat.key)
-
-    formData.append('categorias', categoriasId.join(','))
-
-    if (images.length) {
-      images.forEach((foto: any) =>
-        formData.append('foto', {
-          uri: foto.uri,
-          name: foto.fileName,
-          type: foto.type
-        } as any)
-      )
-    }
-
-    Object.keys(newProducto).forEach((key: any) => {
-      formData.append(key, `${newProducto[key]}`)
-    })
-
-    console.log(JSON.stringify(formData, null, 2))
-
-    try {
-      const response = await fetch(`${backendUrl}/producto`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Accept: 'application/json',
-          Authorization: `Bearer ${token.token}`
-        },
-        body: formData
-      })
-      const data = await response.json()
-      console.log(data)
-      navigation.goBack()
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -183,8 +145,98 @@ export default function Add() {
     })
 
     if (!result.canceled) {
-      console.log(JSON.stringify(result, null, 2))
+      const limite = result.assets.find(
+        foto => foto.fileSize && foto.fileSize > 1000000
+      )
+      if (limite) {
+        errors.imagenes = 'Tamaño de imagen muy grande, límite 1MB'
+      } else {
+        errors.imagenes = ''
+      }
+
       setImages(result.assets)
+    }
+  }
+
+  const validateForm = () => {
+    let errors = {} as ProductoErrors
+    const {
+      producto_nombre,
+      producto_cantidad,
+      estado_producto_id,
+      unidad_medida_id
+    } = newProducto
+
+    const categoriasTrueCount =
+      categorias.find((cat: any) => cat.selected) || []
+
+    if (!producto_nombre) errors.producto_nombre = 'Nombre es obligatorio'
+    if (!producto_cantidad) errors.producto_cantidad = 'Cantidad es obligatorio'
+    if (!estado_producto_id) errors.estado_producto_id = 'Estado es obligatorio'
+    if (!unidad_medida_id)
+      errors.unidad_medida_id = 'Unidad de medida es obligatorio'
+    if (categoriasTrueCount.length === 0)
+      errors.categorias = 'Elige al menos una categoria'
+    if (images.length === 0) errors.imagenes = 'Foto es obligatorio'
+
+    setErrors(errors)
+    return Object.keys(errors).length === 0
+  }
+
+  const onSubmit = async () => {
+    if (validateForm()) {
+      let formData = new FormData()
+      const token = await getToken()
+      if (!token) {
+        console.error('no hay token')
+        return null
+      }
+
+      const categoriasId = categorias
+        .filter((cat: any) => cat.selected)
+        .map((cat: any) => +cat.key)
+
+      formData.append('categorias', categoriasId.join(','))
+
+      if (images.length) {
+        images.forEach((foto: any) =>
+          formData.append('foto', {
+            uri: foto.uri,
+            name: foto.fileName,
+            type: foto.type
+          } as any)
+        )
+      }
+
+      Object.keys(newProducto).forEach((key: any) => {
+        formData.append(key, `${newProducto[key]}`)
+      })
+
+      try {
+        const response = await fetch(`${backendUrl}/producto`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Accept: 'application/json',
+            Authorization: `Bearer ${token.token}`
+          },
+          body: formData
+        })
+        const data = await response.json()
+        console.log(data)
+        setErrors({
+          producto_id: '',
+          producto_nombre: '',
+          producto_cantidad: '',
+          estado_producto_id: '',
+          unidad_medida_id: '',
+          categorias: '',
+          imagenes: ''
+        })
+        navigation.goBack()
+      } catch (error) {
+        console.error(error)
+      }
     }
   }
 
@@ -195,11 +247,15 @@ export default function Add() {
         style={styles.container}
         contentContainerStyle={{
           flexDirection: 'column',
+          justifyContent: 'center',
           alignItems: 'center',
           paddingBottom: 50
         }}>
         <View style={styles.imageContainer}>
-          <Button title='Selecciona Fotos' onPress={pickImage} color={'#fff'} />
+          <Button title='Seleccionar Fotos' onPress={pickImage} />
+          {errors.imagenes ? (
+            <Text style={styles.errorText}>{errors.imagenes}</Text>
+          ) : null}
           <ScrollView
             horizontal={true}
             contentContainerStyle={{
@@ -226,6 +282,9 @@ export default function Add() {
           placeholderTextColor='#fff'
           style={styles.textInput}
         />
+        {errors.producto_nombre ? (
+          <Text style={styles.errorText}>{errors.producto_nombre}</Text>
+        ) : null}
         <TextInput
           onChangeText={cant =>
             setNewProducto({ ...newProducto, producto_cantidad: +cant })
@@ -235,6 +294,9 @@ export default function Add() {
           placeholderTextColor='#fff'
           style={styles.numberInput}
         />
+        {errors.producto_cantidad ? (
+          <Text style={styles.errorText}>{errors.producto_cantidad}</Text>
+        ) : null}
         <RNPickerSelect
           style={{
             ...pickerSelectStyles,
@@ -252,6 +314,9 @@ export default function Add() {
           }
           items={estados}
         />
+        {errors.estado_producto_id ? (
+          <Text style={styles.errorText}>{errors.estado_producto_id}</Text>
+        ) : null}
         <RNPickerSelect
           style={{
             ...pickerSelectStyles,
@@ -269,10 +334,15 @@ export default function Add() {
           }
           items={unidadesMedida}
         />
+        {errors.unidad_medida_id ? (
+          <Text style={styles.errorText}>{errors.unidad_medida_id}</Text>
+        ) : null}
+
         <View style={styles.checkboxContainer}>
-          <Text style={styles.subtitle}>Categoria</Text>
+          <Text style={styles.subtitle}>Categorias</Text>
           {categorias.map((cat: any) => (
             <CheckBox
+              containerStyle={styles.checkBox}
               key={cat.key}
               title={cat.label}
               checkedColor='gray'
@@ -297,8 +367,13 @@ export default function Add() {
               }}
             />
           ))}
+          {errors.categorias ? (
+            <Text style={styles.errorText}>{errors.categorias}</Text>
+          ) : null}
         </View>
-        <Button title='Guardar' color='#fff' onPress={onSubmit} />
+        <View style={styles.buttonContainer}>
+          <Button title='Guardar' onPress={onSubmit} />
+        </View>
       </ScrollView>
     </View>
   )
@@ -309,25 +384,31 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#475569'
   },
-
-  imageContainer: {
-    height: 250
+  buttonContainer: {
+    flex: 1,
+    width: '100%',
+    marginVertical: 6,
+    paddingHorizontal: 20
   },
-
+  imageContainer: {
+    height: 250,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20
+  },
   image: {
     width: 150,
     height: 150,
     objectFit: 'cover',
     borderRadius: 10
   },
-
   title: { fontSize: 32, fontWeight: '700', padding: 20, color: '#fff' },
+  errorText: { color: 'red', marginBottom: 10 },
   subtitle: {
     fontSize: 20,
     marginVertical: 6,
     color: '#fff'
   },
-
   textInput: {
     width: '90%',
     padding: 13,
@@ -338,7 +419,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     shadowColor: '#fff'
   },
-
   numberInput: {
     width: '90%',
     padding: 13,
@@ -348,11 +428,11 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     color: '#fff'
   },
-
+  checkBox: { width: '100%', borderRadius: 6 },
   checkboxContainer: {
     width: '90%',
     marginVertical: 6,
-    borderRadius: 6
+    alignItems: 'center'
   }
 })
 
