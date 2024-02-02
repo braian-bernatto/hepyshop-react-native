@@ -109,7 +109,7 @@ export default function Home() {
     })
 
     return unsubscribe
-  }, [navigation, token])
+  }, [navigation])
 
   if (isLoading) {
     return (

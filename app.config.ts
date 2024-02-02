@@ -4,6 +4,7 @@ export default {
   expo: {
     name: 'hepy-shop-react-native',
     slug: 'hepy-shop-react-native',
+    description: 'Compra los mejores productos al mejor precio',
     version: '1.0.0',
     orientation: 'portrait',
     icon: './assets/icon.png',
@@ -27,7 +28,16 @@ export default {
       favicon: './assets/favicon.png'
     },
     extra: {
-      backendUrl: process.env.BACKEND_URL
+      backendUrl: process.env.EXPO_PUBLIC_BACKEND_URL,
+      eas: {
+        projectId: '0c694743-7c5e-4271-8067-24241dbc4c47'
+      }
+    },
+    updates: {
+      url: 'https://u.expo.dev/0c694743-7c5e-4271-8067-24241dbc4c47'
+    },
+    runtimeVersion: {
+      policy: 'appVersion'
     },
     plugins: [
       [
