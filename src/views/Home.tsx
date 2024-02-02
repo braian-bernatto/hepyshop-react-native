@@ -93,7 +93,7 @@ export default function Home() {
         </>
       )
     })
-  }, [navigation, token, productos])
+  }, [navigation, token])
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
