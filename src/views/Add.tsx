@@ -70,6 +70,7 @@ export default function Add() {
           }
         } else {
           console.log('no hay token')
+          navigation.navigate('Login')
         }
       } catch (error) {
         console.error(error)

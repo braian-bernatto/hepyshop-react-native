@@ -51,6 +51,7 @@ export default function Home() {
         setIsLoading(false)
       } else {
         console.log('no hay token')
+        setToken(null)
         setIsLoading(true)
         const response = await fetch(`${backendUrl}/productos`)
         const json = await response.json()
@@ -82,7 +83,14 @@ export default function Home() {
       headerLeft: () => (
         <>
           {token ? (
-            <Button title='Log Out' color={'#fff'} onPress={() => logOut()} />
+            <Button
+              title='Log Out'
+              color={'#fff'}
+              onPress={() => {
+                logOut()
+                setToken(null)
+              }}
+            />
           ) : (
             <Button
               title='Login'
@@ -101,7 +109,7 @@ export default function Home() {
     })
 
     return unsubscribe
-  }, [navigation])
+  }, [navigation, token])
 
   if (isLoading) {
     return (
