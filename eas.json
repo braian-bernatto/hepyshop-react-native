@@ -6,14 +6,17 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
-      "channel": "development"
+      "channel": "development",
+      "env": { "EXPO_PUBLIC_BACKEND_URL": "https://www.hepyshop.bernatto.xyz" }
     },
     "preview": {
       "distribution": "internal",
-      "channel": "preview"
+      "channel": "preview",
+      "env": { "EXPO_PUBLIC_BACKEND_URL": "https://www.hepyshop.bernatto.xyz" }
     },
     "production": {
-      "channel": "production"
+      "channel": "production",
+      "env": { "EXPO_PUBLIC_BACKEND_URL": "https://www.hepyshop.bernatto.xyz" }
     }
   },
   "submit": {

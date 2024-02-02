@@ -103,13 +103,13 @@ export default function Home() {
     })
   }, [navigation, token])
 
-  React.useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      getProductos()
-    })
+  // React.useEffect(() => {
+  //   const unsubscribe = navigation.addListener('focus', () => {
+  //     getProductos()
+  //   })
 
-    return unsubscribe
-  }, [navigation])
+  //   return unsubscribe
+  // }, [navigation])
 
   if (isLoading) {
     return (
