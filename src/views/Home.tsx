@@ -20,13 +20,13 @@ export default function Home() {
   const [refreshing, setRefreshing] = React.useState(false)
   const backendUrl = Constants.expoConfig?.extra?.backendUrl || ''
   const [isLoading, setIsLoading] = React.useState(false)
+  const [error, setError] = React.useState('')
 
   const getProductos = async () => {
     const token = await getToken()
     try {
       if (token) {
         setToken(token)
-        console.log({ token })
         setIsLoading(true)
         const response = await fetch(`${backendUrl}/productos`, {
           headers: {
@@ -56,11 +56,13 @@ export default function Home() {
         const json = await response.json()
         setProductos(json)
       }
-      setIsLoading(false)
-      setRefreshing(false)
+      setError('')
     } catch (error) {
       console.error(error)
+      setError('Error al cargar los productos...')
     }
+    setIsLoading(false)
+    setRefreshing(false)
   }
 
   const handleRefresh = () => {
@@ -91,11 +93,15 @@ export default function Home() {
         </>
       )
     })
-  }, [token])
+  }, [navigation, token, productos])
 
   React.useEffect(() => {
-    getProductos()
-  }, [])
+    const unsubscribe = navigation.addListener('focus', () => {
+      getProductos()
+    })
+
+    return unsubscribe
+  }, [navigation])
 
   if (isLoading) {
     return (
@@ -108,25 +114,35 @@ export default function Home() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Productos</Text>
-      <FlatList
-        data={productos}
-        style={styles.productsList}
-        ListEmptyComponent={
-          <Text style={styles.title}>No se encontraron productos...</Text>
-        }
-        numColumns={2}
-        contentContainerStyle={{
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          paddingBottom: 40
-        }}
-        keyExtractor={item => item.producto_id.toString()}
-        renderItem={({ item }) => <Product key={item.producto_id} {...item} />}
-        refreshing={refreshing}
-        onRefresh={handleRefresh}
-      />
+      {error ? (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>{error}</Text>
+        </View>
+      ) : (
+        <>
+          <Text style={styles.title}>Productos</Text>
+          <FlatList
+            data={productos}
+            style={styles.productsList}
+            ListEmptyComponent={
+              <Text style={styles.title}>No se encontraron productos...</Text>
+            }
+            numColumns={2}
+            contentContainerStyle={{
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              paddingBottom: 40
+            }}
+            keyExtractor={item => item.producto_id.toString()}
+            renderItem={({ item }) => (
+              <Product key={item.producto_id} {...item} />
+            )}
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+          />
+        </>
+      )}
     </View>
   )
 }
@@ -135,6 +151,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#475569'
+  },
+  errorContainer: {
+    backgroundColor: '#FFC0CB',
+    padding: 16,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: 'red',
+    margin: 16,
+    alignItems: 'center'
+  },
+  errorText: {
+    color: '#D8000C',
+    fontSize: 16,
+    textAlign: 'center'
   },
   loadingContainer: {
     flex: 1,

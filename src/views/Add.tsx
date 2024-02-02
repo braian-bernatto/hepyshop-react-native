@@ -46,6 +46,7 @@ export default function Add() {
     categorias: '',
     imagenes: ''
   })
+  const [isLoading, setIsLoading] = React.useState(false)
 
   React.useEffect(() => {
     const getEstados = async () => {
@@ -213,6 +214,7 @@ export default function Add() {
       })
 
       try {
+        setIsLoading(true)
         const response = await fetch(`${backendUrl}/producto`, {
           method: 'POST',
           headers: {
@@ -237,6 +239,7 @@ export default function Add() {
       } catch (error) {
         console.error(error)
       }
+      setIsLoading(false)
     }
   }
 
@@ -372,7 +375,10 @@ export default function Add() {
           ) : null}
         </View>
         <View style={styles.buttonContainer}>
-          <Button title='Guardar' onPress={onSubmit} />
+          <Button
+            title={isLoading ? 'Guardando...' : 'Guardar'}
+            onPress={onSubmit}
+          />
         </View>
       </ScrollView>
     </View>

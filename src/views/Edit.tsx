@@ -65,6 +65,7 @@ export default function Edit() {
     categorias: '',
     imagenes: ''
   })
+  const [isLoading, setIsLoading] = React.useState(false)
 
   React.useEffect(() => {
     const getEstados = async () => {
@@ -253,6 +254,7 @@ export default function Edit() {
       })
 
       try {
+        setIsLoading(true)
         const response = await fetch(`${backendUrl}/producto/${producto_id}`, {
           method: 'PUT',
           headers: {
@@ -273,10 +275,11 @@ export default function Edit() {
           categorias: '',
           imagenes: ''
         })
-        navigation.goBack()
+        navigation.navigate('Inicio')
       } catch (error) {
         console.error(error)
       }
+      setIsLoading(false)
     }
   }
 
@@ -422,7 +425,10 @@ export default function Edit() {
           ) : null}
         </View>
         <View style={styles.buttonContainer}>
-          <Button title='Modificar' onPress={onSubmit} />
+          <Button
+            title={isLoading ? 'Modificando...' : 'Modificar'}
+            onPress={onSubmit}
+          />
         </View>
       </ScrollView>
     </View>
